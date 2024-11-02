@@ -5,6 +5,7 @@
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
 #include "ws2812.pio.h"
+#include "ssd1306_fontReversed.h"
 
 #define IS_RGBW false
 #define NUM_PIXELS 256
@@ -15,6 +16,22 @@
 
 #define WS2812_PIN 1
 #endif
+
+void printChar(char chr)
+{
+    uint8_t chrNum = chr - 48;
+    uint8_t charData[8];
+
+    // 0 ~ 9 の読み込み処理
+    if (chrNum <= 9)
+    {
+        for (int i = 0; i < 8; ++i)
+        {
+            // 対応関係：'0' = 48 = index:(1+26)*8-1
+            charData[i] = fontReversed[chrNum + (1+26)*8-1 + i];
+        }
+    }
+}
 
 static inline void put_pixel(uint32_t pixel_grb)
 {
