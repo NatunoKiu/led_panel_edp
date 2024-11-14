@@ -27,13 +27,41 @@ static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b) {
 
 void printChar(char chr) {
     uint8_t chrNum = chr - 48;
-    uint8_t charData[8];
+    uint8_t charData[8] = {0b01111100, 0b10000010, 0b10000010, 0b10010010,
+                           0b10000010, 0b10000010, 0b01111100, 0b00000000};
+    static uint8_t r = 0x30;
+    static uint8_t g = 0x30;
+    static uint8_t b = 0x00;
 
     // 0 ~ 9 の読み込み処理
     if (chrNum <= 9) {
         for (int i = 0; i < 8; ++i) {
             // 対応関係：'0' = 48 = index:(1+26)*8-1
             charData[i] = fontReversed[chrNum + (1 + 26) * 8 - 1 + i];
+        }
+    }
+
+    // 初期化処理
+    for (int i = 0; i < 256; ++i) {
+        put_pixel(urgb_u32(0, 0, 0));
+    }
+
+    // 点灯処理
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            if (i % 2 == 0) {
+                if (((charData[i] >> j) & 1) == 0) {
+                    put_pixel(urgb_u32(0, 0, 0));
+                } else if (((charData[i] >> j) & 1) == 1) {
+                    put_pixel(urgb_u32(r, g, b));
+                }
+            } else if (i % 2 == 1) {
+                if (((charData[i] << j) & 0b10000000) == 0) {
+                    put_pixel(urgb_u32(0, 0, 0));
+                } else if (((charData[i] << j) & 0b10000000) == 0b10000000) {
+                    put_pixel(urgb_u32(r, g, b));
+                }
+            }
         }
     }
 }
@@ -47,10 +75,5 @@ int main() {
     uint offset = pio_add_program(pio, &ws2812_program);
     ws2812_program_init(pio, sm, offset, WS2812_PIN, 800000, IS_RGBW);
 
-    // 8個のLEDをrgb=(32,0,32)で光らせる
-    for (uint i = 0; i < 8; i++) {
-        {
-            put_pixel(urgb_u32(0x20, 0x00, 0x20));
-        }
-    }
+    printChar('0');
 }
