@@ -27,23 +27,18 @@ static inline uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b) {
 
 void printChar(char chr) {
     uint8_t chrNum = chr - 48;
-    uint8_t charData[8] = {0b01111100, 0b10000010, 0b10000010, 0b10010010,
-                           0b10000010, 0b10000010, 0b01111100, 0b00000000};
-    static uint8_t r = 0x30;
-    static uint8_t g = 0x30;
+    uint8_t charData[8];
+
+    static uint8_t r = 0x04;
+    static uint8_t g = 0x04;
     static uint8_t b = 0x00;
 
     // 0 ~ 9 の読み込み処理
     if (chrNum <= 9) {
         for (int i = 0; i < 8; ++i) {
             // 対応関係：'0' = 48 = index:(1+26)*8-1
-            charData[i] = fontReversed[chrNum + (1 + 26) * 8 - 1 + i];
+            charData[i] = fontTest[(chrNum + 1 + 26) * 8 - 1 + i];
         }
-    }
-
-    // 初期化処理
-    for (int i = 0; i < 256; ++i) {
-        put_pixel(urgb_u32(0, 0, 0));
     }
 
     // 点灯処理
@@ -76,4 +71,7 @@ int main() {
     ws2812_program_init(pio, sm, offset, WS2812_PIN, 800000, IS_RGBW);
 
     printChar('0');
+    printChar('1');
+    printChar('2');
+    printChar('3');
 }
