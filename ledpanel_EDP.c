@@ -39,6 +39,13 @@ void printChar(char chr) {
         for (int i = 0; i < 8; ++i) {
             charData[i] = fontReversed[(chrNum + 1 + 26) * 8 - 1 + i];
         }
+    } else if (chrNum) {
+        // A ～ Z の読み込み処理
+        // 対応関係： 'A' = 65 = index:(1+0)*8-1
+        for (int i = 0; i < 8; ++i) {
+            charData[i] =
+                fontReversed[(chrNum - (65 - 48) + 1 + 0) * 8 - 1 + i];
+        }
     }
 
     // 点灯処理
@@ -70,8 +77,15 @@ int main() {
     uint offset = pio_add_program(pio, &ws2812_program);
     ws2812_program_init(pio, sm, offset, WS2812_PIN, 800000, IS_RGBW);
 
+    while (1) {
+        printChar('T');
+        printChar('E');
+        printChar('S');
+        printChar('T');
+        sleep_ms(1500);
         printChar('0');
         printChar('1');
         printChar('2');
         printChar('3');
+    }
 }
