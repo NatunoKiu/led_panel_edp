@@ -33,10 +33,10 @@ void printChar(char chr) {
     static uint8_t g = 0x04;
     static uint8_t b = 0x00;
 
-    // 0 ~ 9 の読み込み処理
     if (chrNum <= 9) {
+        // 0 ~ 9 の読み込み処理
+        // 対応関係：'0' = 48 = index:(1+26)*8-1
         for (int i = 0; i < 8; ++i) {
-            // 対応関係：'0' = 48 = index:(1+26)*8-1
             charData[i] = fontReversed[(chrNum + 1 + 26) * 8 - 1 + i];
         }
     }
@@ -70,8 +70,8 @@ int main() {
     uint offset = pio_add_program(pio, &ws2812_program);
     ws2812_program_init(pio, sm, offset, WS2812_PIN, 800000, IS_RGBW);
 
-    printChar('0');
-    printChar('1');
-    printChar('2');
-    printChar('3');
+        printChar('0');
+        printChar('1');
+        printChar('2');
+        printChar('3');
 }
